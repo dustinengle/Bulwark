@@ -31,8 +31,8 @@ PrivacyDialog::PrivacyDialog(QWidget* parent) : QDialog(parent),
     ui->setupUi(this);
 
     // "Spending 999999 zBWK ought to be enough for anybody." - Bill Gates, 2017
-    ui->zBWKpayAmount->setValidator( new QDoubleValidator(0.0, 21000000.0, 20, this) );
-    ui->labelMintAmountValue->setValidator( new QIntValidator(0, 999999, this) );
+    ui->zBWKpayAmount->setValidator(new QDoubleValidator(0.0, 21000000.0, 20, this));
+    ui->labelMintAmountValue->setValidator(new QIntValidator(0, 999999, this));
 
     // Default texts for (mini-) coincontrol
     ui->labelCoinControlQuantity->setText (tr("Coins automatically selected"));
@@ -163,9 +163,7 @@ void PrivacyDialog::on_pushButtonMintzBWK_clicked()
     }
 
     if(GetAdjustedTime() > GetSporkValue(SPORK_22_ZEROCOIN_MAINTENANCE_MODE)) {
-        QMessageBox::information(this, tr("Mint Zerocoin"),
-                                 tr("zBWK is currently undergoing maintenance."), QMessageBox::Ok,
-                                 QMessageBox::Ok);
+        QMessageBox::information(this, tr("Mint Zerocoin"), tr("zBWK is currently undergoing maintenance."), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
 
@@ -493,7 +491,9 @@ void PrivacyDialog::sendzBWK()
     strReturn += strStats;
 
     // Clear amount to avoid double spending when accidentally clicking twice
-    ui->zBWKpayAmount->setText ("0");
+    ui->zBWKpayAmount->setText("0");
+    ui->labelzBWKSelected_int->setText("0");
+    ui->labelQuantitySelected_int->setText("0");
 
     ui->TEMintStatus->setPlainText(strReturn);
     ui->TEMintStatus->repaint();
@@ -595,7 +595,7 @@ void PrivacyDialog::setBalance(const CAmount& balance, const CAmount& unconfirme
             mapUnconfirmed.at(mint.GetDenomination())++;
         }
         else {
-            // After a denomination is confirmed it might still be immature because < 3 of the same denomination were minted after it
+            // After a denomination is confirmed it might still be immature because < 1 of the same denomination were minted after it
             CBlockIndex *pindex = chainActive[mint.GetHeight() + 1];
             int nHeight2CheckpointsDeep = nBestHeight - (nBestHeight % 10) - 20;
             int nMintsAdded = 0;
@@ -671,16 +671,18 @@ void PrivacyDialog::setBalance(const CAmount& balance, const CAmount& unconfirme
     if (walletModel) {
         nLockedBalance = walletModel->getLockedBalance();
     }
+    
+    CAmount bwkBalance = balance - (immatureBalance + nLockedBalance);
+    if (bwkBalance < 0) bwkBalance = 0;
 
     ui->labelzAvailableAmount->setText(QString::number(zerocoinBalance/COIN) + QString(" zBWK "));
     ui->labelzAvailableAmount_2->setText(QString::number(matureZerocoinBalance/COIN) + QString(" zBWK "));
-    CAmount availableAmount = (balance - immatureBalance - nLockedBalance) <= 0 ? 0 : balance - immatureBalance - nLockedBalance;
-    ui->labelzBWKAmountValue->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, availableAmount, false, BitcoinUnits::separatorAlways));
+    ui->labelzBWKAmountValue->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, bwkBalance, false, BitcoinUnits::separatorAlways));
 
     // Display AutoMint status
     QString strAutomintStatus = tr("AutoMint Status:");
 
-    if (pwalletMain->isZeromintEnabled ()) {
+    if (pwalletMain->isZeromintEnabled()) {
        strAutomintStatus += tr(" <b>enabled</b>.");
     }
     else {

@@ -53,7 +53,7 @@ bool CMasternodeSync::IsBlockchainSynced()
     if (pindex == NULL) return false;
 
 
-    if (pindex->nTime + 60 * 60 < GetTime())
+    if ((pindex->nTime + 60 * 60) < GetTime() && Params().NetworkID() != CBaseChainParams::TESTNET)
         return false;
 
     fBlockchainSynced = true;
@@ -286,11 +286,12 @@ void CMasternodeSync::Process()
 
         //set to synced
         if (RequestedMasternodeAssets == MASTERNODE_SYNC_SPORKS) {
+            if (RequestedMasternodeAttempt >= 2) GetNextAsset();
+            
             if (pnode->HasFulfilledRequest("getspork")) continue;
             pnode->FulfilledRequest("getspork");
 
             pnode->PushMessage("getsporks"); //get current network sporks
-            if (RequestedMasternodeAttempt >= 2) GetNextAsset();
             RequestedMasternodeAttempt++;
 
             return;
