@@ -8,7 +8,7 @@ $(package)_dependencies=openssl zlib
 $(package)_linux_dependencies=freetype fontconfig libxcb libX11 xproto libXext
 $(package)_build_subdir=qtbase
 $(package)_qt_libs=corelib network widgets gui plugins testlib
-$(package)_patches=fix_qt_pkgconfig.patch mac-qmake.conf fix_configure_mac.patch fix_no_printer.patch
+$(package)_patches=fix_qt_pkgconfig.patch mac-qmake.conf fix_configure_mac.patch fix_no_printer.patch aarch32-qmake.conf aarch64-qmake.conf mingw-uuidof.patch
 
 $(package)_qttranslations_file_name=qttranslations-$($(package)_suffix)
 $(package)_qttranslations_sha256_hash=9822084f8e2d2939ba39f4af4c0c2320e45d5996762a9423f833055607604ed8
@@ -138,6 +138,7 @@ define $(package)_preprocess_cmds
   mkdir -p qtbase/mkspecs/aarch64-linux-gnu &&\
   cp -f qtbase/mkspecs/linux-arm-gnueabi-g++/qplatformdefs.h qtbase/mkspecs/aarch64-linux-gnu/ &&\
   cp -f $($(package)_patch_dir)/aarch64-qmake.conf qtbase/mkspecs/aarch64-linux-gnu/qmake.conf &&\
+  patch -p1 < $($(package)_patch_dir)/mingw-uuidof.patch && \
   patch -p1 < $($(package)_patch_dir)/pidlist_absolute.patch && \
   patch -p1 < $($(package)_patch_dir)/fix-xcb-include-order.patch && \
   patch -p1 < $($(package)_patch_dir)/fix_qt_pkgconfig.patch && \
