@@ -52,17 +52,15 @@ public:
 		CBanDB bandb;
 		bandb.Read(banMap);
 
-		cachedBanlist.clear();
-#if QT_VERSION >= 0x040700
-		cachedBanlist.reserve(banMap.size());
-#endif
-		for (banmap_t::iterator it = banMap.begin(); it != banMap.end(); it++)
-		{
-			CCombinedBan banEntry;
-			banEntry.subnet = (*it).first;
-			banEntry.banEntry = (*it).second;
-			cachedBanlist.append(banEntry);
-		}
+        cachedBanlist.clear();
+        cachedBanlist.reserve(banMap.size());
+        for (banmap_t::iterator it = banMap.begin(); it != banMap.end(); it++)
+        {
+            CCombinedBan banEntry;
+            banEntry.subnet = (*it).first;
+            banEntry.banEntry = (*it).second;
+            cachedBanlist.append(banEntry);
+        }
 
 		if (sortColumn >= 0)
 			// sort cachedBanlist (use stable sort to prevent rows jumping around unneceesarily)
