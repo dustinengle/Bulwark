@@ -132,14 +132,12 @@ define $(package)_preprocess_cmds
   patch -p1 -i $($(package)_patch_dir)/fix_qt_pkgconfig.patch &&\
   patch -p1 -i $($(package)_patch_dir)/fix_configure_mac.patch &&\
   patch -p1 -i $($(package)_patch_dir)/fix_no_printer.patch &&\
-  patch -p1 -i $($(package)_patch_dir)/qfixed-coretext.patch &&\
   mkdir -p qtbase/mkspecs/arm-linux-gnueabihf &&\
   cp -f qtbase/mkspecs/linux-arm-gnueabi-g++/qplatformdefs.h qtbase/mkspecs/arm-linux-gnueabihf/ &&\
   cp -f $($(package)_patch_dir)/aarch32-qmake.conf qtbase/mkspecs/arm-linux-gnueabihf/qmake.conf &&\
   mkdir -p qtbase/mkspecs/aarch64-linux-gnu &&\
   cp -f qtbase/mkspecs/linux-arm-gnueabi-g++/qplatformdefs.h qtbase/mkspecs/aarch64-linux-gnu/ &&\
   cp -f $($(package)_patch_dir)/aarch64-qmake.conf qtbase/mkspecs/aarch64-linux-gnu/qmake.conf &&\
-  patch -p1 < $($(package)_patch_dir)/mingw-uuidof.patch && \
   patch -p1 < $($(package)_patch_dir)/pidlist_absolute.patch && \
   patch -p1 < $($(package)_patch_dir)/fix-xcb-include-order.patch && \
   patch -p1 < $($(package)_patch_dir)/fix_qt_pkgconfig.patch && \
